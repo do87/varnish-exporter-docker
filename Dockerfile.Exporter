@@ -1,0 +1,11 @@
+FROM docker:19.03.0-rc2
+ARG VERSION=1.4.1
+ARG ARCH=linux-amd64
+ADD https://github.com/jonnenauha/prometheus_varnish_exporter/releases/download/${VERSION}/prometheus_varnish_exporter-${VERSION}.${ARCH}.tar.gz /tmp/varnish_exporter.tar.gz
+RUN tar -xzf varnish_exporter.tar.gz && \
+    mv prometheus_varnish_exporter-${VERSION}.${ARCH} /usr/bin/varnish_exporter
+RUN apk --update add --virtual build-dependencies && \
+    chmod +x /usr/bin/varnish_exporter && \
+    mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2 && \
+    apk del build-dependencies
+ENTRYPOINT [ "/usr/bin/varnish_exporter", "-no-exit" ]

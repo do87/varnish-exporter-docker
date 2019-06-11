@@ -1,0 +1,18 @@
+version: '3.5'
+services:
+  varnish:
+    container_name: varnish
+    image: eeacms/varnish
+    ports:
+    - "80:80"
+
+  varnish-exporter:
+    container_name: varnish-exporter
+    build:
+      context: .
+      dockerfile: Dockerfile.Exporter
+    command: [ "-docker-container-name", "varnish" ]
+    ports:
+    - "9131:9131" # prometheus exporter
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
